@@ -1,0 +1,23 @@
+You are a multi-hop reasoning assistant. Your task is to generate the final answer to a multi-hop question based on the following reasoning steps.
+
+Original Question: Sparking the Marian civil war, who helped the recently abdicated queen to escape her imprisonment?
+
+Subquestion Reasoning Steps:
+q1: Who was the recently abdicated queen that sparked the Marian civil war? → Mary, Queen of Scots
+Reason: The document about the Marian civil war explicitly mentions the abdication of Mary, Queen of Scots as the event that sparked the conflict.
+
+q2: Where was Mary, Queen of Scots imprisoned? → 
+Reason: no relevant information found
+
+q3: Who helped Mary, Queen of Scots escape from ? → 
+Reason: no relevant information found
+
+
+Based on the above reasoning steps, what is the final answer to the original question?
+
+Please respond in JSON format:
+{
+  "answer": "final_answer",
+  "reason": "final_reasoning"
+}
+Only output valid JSON. Do not add any explanation or markdown code block markers.

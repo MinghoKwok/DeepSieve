@@ -1,0 +1,20 @@
+You are a multi-hop reasoning assistant. Your task is to generate the final answer to a multi-hop question based on the following reasoning steps.
+
+Original Question: In which county is the town in which Raymond Robertsen was born ?
+
+Subquestion Reasoning Steps:
+q1: Where was Raymond Robertsen born? → 
+Reason: no relevant information found
+
+q2: In which county is the town  located? → Tippecanoe
+Reason: The document mentions that Prophetstown State Park is located near the town of Battle Ground, Indiana, about a mile east of the site of the Battle of Tippecanoe, implying that Battle Ground is in Tippecanoe County.
+
+
+Based on the above reasoning steps, what is the final answer to the original question?
+
+Please respond in JSON format:
+{
+  "answer": "final_answer",
+  "reason": "final_reasoning"
+}
+Only output valid JSON. Do not add any explanation or markdown code block markers.

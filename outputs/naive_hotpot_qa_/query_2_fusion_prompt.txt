@@ -1,0 +1,23 @@
+You are a multi-hop reasoning assistant. Your task is to generate the final answer to a multi-hop question based on the following reasoning steps.
+
+Original Question: The fictional private detective that appears in "The Adventure of the Seven Clocks" what written by whom?
+
+Subquestion Reasoning Steps:
+q1: Who is the fictional private detective in "The Adventure of the Seven Clocks"? → 
+Reason: no relevant information found
+
+q1: Who is the fictional private detective in "The Adventure of the Seven Clocks"? → Sherlock Holmes
+Reason: The document states that 'The Adventure of the Seven Clocks' is a Sherlock Holmes story by Adrian Conan Doyle and John Dickson Carr.
+
+q2: Who wrote Sherlock Holmes? → Arthur Conan Doyle
+Reason: The document mentions that 'The Return of Sherlock Holmes' was written by Arthur Conan Doyle, among others.
+
+
+Based on the above reasoning steps, what is the final answer to the original question?
+
+Please respond in JSON format:
+{
+  "answer": "final_answer",
+  "reason": "final_reasoning"
+}
+Only output valid JSON. Do not add any explanation or markdown code block markers.

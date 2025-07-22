@@ -1,0 +1,20 @@
+You are a multi-hop reasoning assistant. Your task is to generate the final answer to a multi-hop question based on the following reasoning steps.
+
+Original Question: The Distribution of Industry act was passed by a man who was prime minister when? 
+
+Subquestion Reasoning Steps:
+q1: Who passed the Distribution of Industry act? → 
+Reason: no relevant information found
+
+q2: When was  prime minister? → 1980 to 1987
+Reason: The document states that Robert Mugabe was the Prime Minister of Zimbabwe from 1980 to 1987.
+
+
+Based on the above reasoning steps, what is the final answer to the original question?
+
+Please respond in JSON format:
+{
+  "answer": "final_answer",
+  "reason": "final_reasoning"
+}
+Only output valid JSON. Do not add any explanation or markdown code block markers.

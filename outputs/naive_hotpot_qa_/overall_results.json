@@ -1,0 +1,385 @@
+{
+  "queries": [
+    {
+      "query": "what is one of the stars of  The Newcomers known for",
+      "ground_truth": "superhero roles as the Marvel Comics"
+    },
+    {
+      "query": "The fictional private detective that appears in \"The Adventure of the Seven Clocks\" what written by whom?",
+      "ground_truth": "Sir Arthur Conan Doyle"
+    },
+    {
+      "query": "The Distribution of Industry act was passed by a man who was prime minister when? ",
+      "ground_truth": "1945 to 1951"
+    },
+    {
+      "query": "Sparking the Marian civil war, who helped the recently abdicated queen to escape her imprisonment?",
+      "ground_truth": "the Queen's gaoler"
+    },
+    {
+      "query": "In which county is the town in which Raymond Robertsen was born ?",
+      "ground_truth": "Finnmark county,"
+    }
+  ],
+  "overall_metrics": {
+    "avg_exact_match": 0.2,
+    "avg_f1": 0.40606060606060607,
+    "avg_retrieval_time": 0.10074577331542969,
+    "avg_docs_searched": 15063.4,
+    "avg_similarity": 0.4053807654976844,
+    "avg_prompt_tokens_per_subquery": 1391.9,
+    "avg_total_tokens_per_query": 3266.4
+  },
+  "all_query_metrics": [
+    {
+      "total_retrieval_time": 0.07832551002502441,
+      "total_docs_searched": 11471,
+      "avg_similarity_scores": [
+        0.3248790860176086,
+        0.4393657624721527,
+        0.41624327898025515
+      ],
+      "max_similarity_scores": [
+        0.5182510614395142,
+        0.4846348762512207,
+        0.49486806988716125
+      ],
+      "subquery_metrics": [
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.025990009307861328,
+          "docs_searched": 1660,
+          "avg_similarity": 0.3248790860176086,
+          "max_similarity": 0.5182510614395142
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.02693033218383789,
+          "docs_searched": 8151,
+          "avg_similarity": 0.4393657624721527,
+          "max_similarity": 0.4846348762512207
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.025405168533325195,
+          "docs_searched": 1660,
+          "avg_similarity": 0.41624327898025515,
+          "max_similarity": 0.49486806988716125
+        }
+      ],
+      "total_prompt_tokens": 2278,
+      "prompt_token_counts": [
+        645,
+        775,
+        610,
+        248
+      ],
+      "evaluation_metrics": {
+        "exact_match": 0.0,
+        "f1": 0.0,
+        "final_answer": "The Newcomers (film)",
+        "ground_truth": "superhero roles as the Marvel Comics",
+        "fallback_answer": "The Newcomers (film)",
+        "final_reason": "The stars of The Newcomers, including Christopher McCoy, Kate Bosworth, Paul Dano, and Chris Evans, are known for starring in the film 'The Newcomers'."
+      },
+      "evaluation_metrics_fallback": {
+        "exact_match": 0.0,
+        "f1": 0.0,
+        "ground_truth": "superhero roles as the Marvel Comics"
+      },
+      "avg_retrieval_time": 0.03916275501251221,
+      "avg_similarity": 0.3934960424900054,
+      "max_similarity": 0.5182510614395142,
+      "avg_prompt_tokens": 1015.0,
+      "max_prompt_tokens": 775,
+      "min_prompt_tokens": 610,
+      "fusion_prompt_tokens": 248
+    },
+    {
+      "total_retrieval_time": 0.09539484977722168,
+      "total_docs_searched": 11471,
+      "avg_similarity_scores": [
+        0.33808189630508423,
+        0.450147807598114,
+        0.3808416187763214
+      ],
+      "max_similarity_scores": [
+        0.35424771904945374,
+        0.6120574474334717,
+        0.5650057196617126
+      ],
+      "subquery_metrics": [
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.020807743072509766,
+          "docs_searched": 1660,
+          "avg_similarity": 0.33808189630508423,
+          "max_similarity": 0.35424771904945374
+        },
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.04987740516662598,
+          "docs_searched": 8151,
+          "avg_similarity": 0.450147807598114,
+          "max_similarity": 0.6120574474334717
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.024709701538085938,
+          "docs_searched": 1660,
+          "avg_similarity": 0.3808416187763214,
+          "max_similarity": 0.5650057196617126
+        }
+      ],
+      "total_prompt_tokens": 2413,
+      "prompt_token_counts": [
+        775,
+        700,
+        705,
+        233
+      ],
+      "evaluation_metrics": {
+        "exact_match": 0.0,
+        "f1": 0.36363636363636365,
+        "final_answer": "Adrian Conan Doyle and John Dickson Carr",
+        "ground_truth": "Sir Arthur Conan Doyle",
+        "fallback_answer": "Arthur Conan Doyle",
+        "final_reason": "The fictional private detective in 'The Adventure of the Seven Clocks' is Sherlock Holmes, and the story was written by Adrian Conan Doyle and John Dickson Carr."
+      },
+      "evaluation_metrics_fallback": {
+        "exact_match": 0.0,
+        "f1": 0.8571428571428571,
+        "ground_truth": "Sir Arthur Conan Doyle"
+      },
+      "avg_retrieval_time": 0.04769742488861084,
+      "avg_similarity": 0.38969044089317323,
+      "max_similarity": 0.6120574474334717,
+      "avg_prompt_tokens": 1090.0,
+      "max_prompt_tokens": 775,
+      "min_prompt_tokens": 700,
+      "fusion_prompt_tokens": 233
+    },
+    {
+      "total_retrieval_time": 0.1137995719909668,
+      "total_docs_searched": 19622,
+      "avg_similarity_scores": [
+        0.30641788244247437,
+        0.48627892732620237,
+        0.30937460660934446,
+        0.4729986071586609
+      ],
+      "max_similarity_scores": [
+        0.3580789268016815,
+        0.6513886451721191,
+        0.33397501707077026,
+        0.6745666861534119
+      ],
+      "subquery_metrics": [
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.02289271354675293,
+          "docs_searched": 1660,
+          "avg_similarity": 0.30641788244247437,
+          "max_similarity": 0.3580789268016815
+        },
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.028063535690307617,
+          "docs_searched": 8151,
+          "avg_similarity": 0.48627892732620237,
+          "max_similarity": 0.6513886451721191
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.03422260284423828,
+          "docs_searched": 1660,
+          "avg_similarity": 0.30937460660934446,
+          "max_similarity": 0.33397501707077026
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.02862071990966797,
+          "docs_searched": 8151,
+          "avg_similarity": 0.4729986071586609,
+          "max_similarity": 0.6745666861534119
+        }
+      ],
+      "total_prompt_tokens": 4148,
+      "prompt_token_counts": [
+        887,
+        848,
+        896,
+        1264,
+        253
+      ],
+      "evaluation_metrics": {
+        "exact_match": 1.0,
+        "f1": 1.0,
+        "final_answer": "1945 to 1951",
+        "ground_truth": "1945 to 1951",
+        "fallback_answer": "1945 to 1951",
+        "final_reason": "The Distribution of Industry Act was passed by the Labour government of Clement Attlee, who served as Prime Minister from 1945 to 1951."
+      },
+      "evaluation_metrics_fallback": {
+        "exact_match": 1.0,
+        "f1": 1.0,
+        "ground_truth": "1945 to 1951"
+      },
+      "avg_retrieval_time": 0.0568997859954834,
+      "avg_similarity": 0.39376750588417053,
+      "max_similarity": 0.6745666861534119,
+      "avg_prompt_tokens": 1947.5,
+      "max_prompt_tokens": 1264,
+      "min_prompt_tokens": 848,
+      "fusion_prompt_tokens": 253
+    },
+    {
+      "total_retrieval_time": 0.10519933700561523,
+      "total_docs_searched": 13131,
+      "avg_similarity_scores": [
+        0.41224493980407717,
+        0.4069338083267212,
+        0.42043007612228395,
+        0.5792356193065643
+      ],
+      "max_similarity_scores": [
+        0.6272776126861572,
+        0.6121104955673218,
+        0.6487841606140137,
+        0.7656050324440002
+      ],
+      "subquery_metrics": [
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.025927305221557617,
+          "docs_searched": 1660,
+          "avg_similarity": 0.41224493980407717,
+          "max_similarity": 0.6272776126861572
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.021785497665405273,
+          "docs_searched": 1660,
+          "avg_similarity": 0.4069338083267212,
+          "max_similarity": 0.6121104955673218
+        },
+        {
+          "subquery_id": "q3",
+          "retrieval_time": 0.026378154754638672,
+          "docs_searched": 1660,
+          "avg_similarity": 0.42043007612228395,
+          "max_similarity": 0.6487841606140137
+        },
+        {
+          "subquery_id": "q3",
+          "retrieval_time": 0.031108379364013672,
+          "docs_searched": 8151,
+          "avg_similarity": 0.5792356193065643,
+          "max_similarity": 0.7656050324440002
+        }
+      ],
+      "total_prompt_tokens": 3820,
+      "prompt_token_counts": [
+        807,
+        891,
+        896,
+        943,
+        283
+      ],
+      "evaluation_metrics": {
+        "exact_match": 0.0,
+        "f1": 0.0,
+        "final_answer": "her gaoler's family",
+        "ground_truth": "the Queen's gaoler",
+        "fallback_answer": "her gaoler's family",
+        "final_reason": "Mary, Queen of Scots was the recently abdicated queen who sparked the Marian civil war. She was imprisoned at Loch Leven Castle and escaped with the help of her gaoler's family."
+      },
+      "evaluation_metrics_fallback": {
+        "exact_match": 0.0,
+        "f1": 0.0,
+        "ground_truth": "the Queen's gaoler"
+      },
+      "avg_retrieval_time": 0.035066445668538414,
+      "avg_similarity": 0.4547111108899117,
+      "max_similarity": 0.7656050324440002,
+      "avg_prompt_tokens": 1179.0,
+      "max_prompt_tokens": 943,
+      "min_prompt_tokens": 807,
+      "fusion_prompt_tokens": 283
+    },
+    {
+      "total_retrieval_time": 0.11100959777832031,
+      "total_docs_searched": 19622,
+      "avg_similarity_scores": [
+        0.33050702810287474,
+        0.5150660216808319,
+        0.25984129309654236,
+        0.47554056644439696
+      ],
+      "max_similarity_scores": [
+        0.355360209941864,
+        0.6962074041366577,
+        0.3003082275390625,
+        0.8211854696273804
+      ],
+      "subquery_metrics": [
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.025157928466796875,
+          "docs_searched": 1660,
+          "avg_similarity": 0.33050702810287474,
+          "max_similarity": 0.355360209941864
+        },
+        {
+          "subquery_id": "q1",
+          "retrieval_time": 0.029997587203979492,
+          "docs_searched": 8151,
+          "avg_similarity": 0.5150660216808319,
+          "max_similarity": 0.6962074041366577
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.023841381072998047,
+          "docs_searched": 1660,
+          "avg_similarity": 0.25984129309654236,
+          "max_similarity": 0.3003082275390625
+        },
+        {
+          "subquery_id": "q2",
+          "retrieval_time": 0.0320127010345459,
+          "docs_searched": 8151,
+          "avg_similarity": 0.47554056644439696,
+          "max_similarity": 0.8211854696273804
+        }
+      ],
+      "total_prompt_tokens": 3673,
+      "prompt_token_counts": [
+        894,
+        539,
+        1025,
+        998,
+        217
+      ],
+      "evaluation_metrics": {
+        "exact_match": 0.0,
+        "f1": 0.6666666666666666,
+        "final_answer": "Finnmark",
+        "ground_truth": "Finnmark county,",
+        "fallback_answer": "Finnmark",
+        "final_reason": "Raymond Robertsen was born in Hammerfest, which is located in Finnmark county."
+      },
+      "evaluation_metrics_fallback": {
+        "exact_match": 0.0,
+        "f1": 0.6666666666666666,
+        "ground_truth": "Finnmark county,"
+      },
+      "avg_retrieval_time": 0.055504798889160156,
+      "avg_similarity": 0.3952387273311615,
+      "max_similarity": 0.8211854696273804,
+      "avg_prompt_tokens": 1728.0,
+      "max_prompt_tokens": 1025,
+      "min_prompt_tokens": 539,
+      "fusion_prompt_tokens": 217
+    }
+  ]
+}

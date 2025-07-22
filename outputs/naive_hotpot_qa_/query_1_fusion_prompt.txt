@@ -1,0 +1,23 @@
+You are a multi-hop reasoning assistant. Your task is to generate the final answer to a multi-hop question based on the following reasoning steps.
+
+Original Question: what is one of the stars of  The Newcomers known for
+
+Subquestion Reasoning Steps:
+q1: Who are the stars of The Newcomers? → Christopher McCoy, Kate Bosworth, Paul Dano, Chris Evans
+Reason: The stars of The Newcomers are explicitly mentioned in the first document.
+
+q2: What is Christopher McCoy, Kate Bosworth, Paul Dano, Chris Evans known for? → 
+Reason: no relevant information found
+
+q2: What is Christopher McCoy, Kate Bosworth, Paul Dano, Chris Evans known for? → The Newcomers (film)
+Reason: The document mentions that Christopher McCoy, Kate Bosworth, Paul Dano, and Chris Evans are known for starring in the film 'The Newcomers'.
+
+
+Based on the above reasoning steps, what is the final answer to the original question?
+
+Please respond in JSON format:
+{
+  "answer": "final_answer",
+  "reason": "final_reasoning"
+}
+Only output valid JSON. Do not add any explanation or markdown code block markers.
