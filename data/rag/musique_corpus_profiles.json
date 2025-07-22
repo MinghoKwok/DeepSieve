@@ -1,0 +1,4 @@
+{
+  "local_profile": "This knowledge base focuses on specific named entities such as People (e.g., artists, politicians), Organizations (e.g., companies, institutions), Locations (e.g., cities, countries), Events (e.g., historical or sports events), and Works (e.g., books, films, artworks). It is ideal for entity-centric or biographical questions.",
+  "global_profile": "This knowledge base contains more general background or contextual information that is not specific to any single named entity. It is more comprehensive and serves as a general fallback when the entity-specific source cannot answer the query. Select this profile when the query is not related to any specific entity in local profile."
+}

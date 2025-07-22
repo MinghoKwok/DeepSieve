@@ -1,0 +1,4 @@
+{
+  "local_profile": "This corpus includes documents related to People, Organizations, Locations, Events, and notable Works. It emphasizes named entities and is well-suited for questions involving specific persons, places, or creations.",
+  "global_profile": "This corpus provides general-purpose knowledge and covers a wide range of background facts. It should be used when queries are not focused on specific named entities or require general reasoning. Select this profile when the query is not related to any specific entity in local profile."
+}
