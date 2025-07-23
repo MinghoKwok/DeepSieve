@@ -1,3 +1,9 @@
+"""
+utils/data_load.py
+
+This module loads data from the data/rag directory.
+"""
+
 import json
 from typing import List, Dict, Tuple
 

@@ -1,3 +1,9 @@
+"""
+rag/graph_rag.py
+
+This module implements the GraphRAG system for document retrieval and question answering.
+"""
+
 import os
 import json
 import requests

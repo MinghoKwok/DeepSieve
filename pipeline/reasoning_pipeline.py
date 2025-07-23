@@ -1,5 +1,5 @@
 """
-reasoning_pipeline.py
+pipeline/reasoning_pipeline.py
 
 This module implements the multi-hop reasoning control pipeline for DeepSieve.
 It includes:

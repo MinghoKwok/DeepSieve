@@ -1,3 +1,9 @@
+"""
+utils/llm_call.py
+
+This module calls the OpenAI Chat API with retry mechanism.
+"""
+
 import requests
 import time
 

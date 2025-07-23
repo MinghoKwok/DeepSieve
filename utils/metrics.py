@@ -1,3 +1,9 @@
+"""
+utils/metrics.py
+
+This module contains functions for evaluating the performance of the RAG system.
+"""
+
 import tiktoken
 
 

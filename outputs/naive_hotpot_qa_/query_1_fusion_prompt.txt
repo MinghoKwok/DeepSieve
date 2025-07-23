@@ -4,7 +4,7 @@ Original Question: what is one of the stars of  The Newcomers known for
 
 Subquestion Reasoning Steps:
 q1: Who are the stars of The Newcomers? → Christopher McCoy, Kate Bosworth, Paul Dano, Chris Evans
-Reason: The stars of The Newcomers are explicitly mentioned in the first document.
+Reason: The stars of The Newcomers are mentioned in the first document.
 
 q2: What is Christopher McCoy, Kate Bosworth, Paul Dano, Chris Evans known for? → 
 Reason: no relevant information found

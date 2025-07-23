@@ -1,3 +1,9 @@
+"""
+rag/naive_rag.py
+
+This module implements the NaiveRAG system for document retrieval and question answering.
+"""
+
 import os
 import json
 import requests
