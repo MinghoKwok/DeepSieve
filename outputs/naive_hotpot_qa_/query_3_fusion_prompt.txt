@@ -6,14 +6,8 @@ Subquestion Reasoning Steps:
 q1: Who passed the Distribution of Industry act? → 
 Reason: no relevant information found
 
-q1: Who passed the Distribution of Industry act? → Labour government of Clement Attlee
-Reason: The document explicitly states that the Distribution of Industry Act 1950 was passed by the Labour government of Clement Attlee in the United Kingdom.
-
-q2: When was Labour government of Clement Attlee prime minister? → 
-Reason: no relevant information found
-
-q2: When was Labour government of Clement Attlee prime minister? → 1945 to 1951
-Reason: The document states that Clement Attlee served as Prime Minister of the United Kingdom from 1945 to 1951.
+q2: When was  prime minister? → 1980 to 1987
+Reason: The document states that Robert Mugabe was the Prime Minister of Zimbabwe from 1980 to 1987.
 
 
 Based on the above reasoning steps, what is the final answer to the original question?

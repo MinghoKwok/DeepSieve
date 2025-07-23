@@ -12,9 +12,6 @@ Reason: The document mentions Mary, Queen of Scots' escape from Loch Leven Castl
 q3: Who helped Mary, Queen of Scots escape from Loch Leven Castle? → 
 Reason: no relevant information found
 
-q3: Who helped Mary, Queen of Scots escape from Loch Leven Castle? → her gaoler's family
-Reason: The document states that Mary, Queen of Scots escaped with the help of her gaoler's family.
-
 
 Based on the above reasoning steps, what is the final answer to the original question?
 
