@@ -24,15 +24,15 @@
   "overall_metrics": {
     "avg_exact_match": 0.0,
     "avg_f1": 0.06666666666666667,
-    "avg_retrieval_time": 0.022089433670043946,
+    "avg_retrieval_time": 0.022324323654174805,
     "avg_docs_searched": 4950.2,
     "avg_similarity": 0.37501454432805376,
     "avg_prompt_tokens_per_subquery": 829.6333333333332,
-    "avg_total_tokens_per_query": 2019.4
+    "avg_total_tokens_per_query": 2019.8
   },
   "all_query_metrics": [
     {
-      "total_retrieval_time": 0.02440190315246582,
+      "total_retrieval_time": 0.037592411041259766,
       "total_docs_searched": 9811,
       "avg_similarity_scores": [
         0.32487906217575074,
@@ -45,14 +45,14 @@
       "subquery_metrics": [
         {
           "subquery_id": "q1",
-          "retrieval_time": 0.009335517883300781,
+          "retrieval_time": 0.023918628692626953,
           "docs_searched": 1660,
           "avg_similarity": 0.32487906217575074,
           "max_similarity": 0.5182510018348694
         },
         {
           "subquery_id": "q2",
-          "retrieval_time": 0.015066385269165039,
+          "retrieval_time": 0.013673782348632812,
           "docs_searched": 8151,
           "avg_similarity": 0.43936570882797243,
           "max_similarity": 0.4846348762512207
@@ -77,7 +77,7 @@
         "f1": 0.0,
         "ground_truth": "superhero roles as the Marvel Comics"
       },
-      "avg_retrieval_time": 0.01220095157623291,
+      "avg_retrieval_time": 0.018796205520629883,
       "avg_similarity": 0.3821223855018616,
       "max_similarity": 0.5182510018348694,
       "avg_prompt_tokens": 710.0,
@@ -86,7 +86,7 @@
       "fusion_prompt_tokens": 185
     },
     {
-      "total_retrieval_time": 0.018349409103393555,
+      "total_retrieval_time": 0.016310453414916992,
       "total_docs_searched": 3320,
       "avg_similarity_scores": [
         0.33808191418647765,
@@ -99,48 +99,48 @@
       "subquery_metrics": [
         {
           "subquery_id": "q1",
-          "retrieval_time": 0.009208917617797852,
+          "retrieval_time": 0.008940696716308594,
           "docs_searched": 1660,
           "avg_similarity": 0.33808191418647765,
           "max_similarity": 0.35424768924713135
         },
         {
           "subquery_id": "q2",
-          "retrieval_time": 0.009140491485595703,
+          "retrieval_time": 0.0073697566986083984,
           "docs_searched": 1660,
           "avg_similarity": 0.4054230809211731,
           "max_similarity": 0.4291662871837616
         }
       ],
-      "total_prompt_tokens": 1684,
+      "total_prompt_tokens": 1686,
       "prompt_token_counts": [
         775,
         718,
-        191
+        193
       ],
       "evaluation_metrics": {
         "exact_match": 0.0,
         "f1": 0.0,
-        "final_answer": "Ed Sheeran and Amy Wadge",
+        "final_answer": "unknown",
         "ground_truth": "Sir Arthur Conan Doyle",
         "fallback_answer": "Ed Sheeran and Amy Wadge",
-        "final_reason": "The document states that all songs in 'Songs I Wrote with Amy' were written collaboratively by Ed Sheeran and Amy Wadge."
+        "final_reason": "no relevant information found about the fictional private detective in 'The Adventure of the Seven Clocks'"
       },
       "evaluation_metrics_fallback": {
         "exact_match": 0.0,
         "f1": 0.0,
         "ground_truth": "Sir Arthur Conan Doyle"
       },
-      "avg_retrieval_time": 0.009174704551696777,
+      "avg_retrieval_time": 0.008155226707458496,
       "avg_similarity": 0.37175249755382533,
       "max_similarity": 0.4291662871837616,
       "avg_prompt_tokens": 746.5,
       "max_prompt_tokens": 775,
       "min_prompt_tokens": 718,
-      "fusion_prompt_tokens": 191
+      "fusion_prompt_tokens": 193
     },
     {
-      "total_retrieval_time": 0.017184972763061523,
+      "total_retrieval_time": 0.01532888412475586,
       "total_docs_searched": 3320,
       "avg_similarity_scores": [
         0.30641780495643617,
@@ -153,14 +153,14 @@
       "subquery_metrics": [
         {
           "subquery_id": "q1",
-          "retrieval_time": 0.009985208511352539,
+          "retrieval_time": 0.007833719253540039,
           "docs_searched": 1660,
           "avg_similarity": 0.30641780495643617,
           "max_similarity": 0.35807889699935913
         },
         {
           "subquery_id": "q2",
-          "retrieval_time": 0.007199764251708984,
+          "retrieval_time": 0.00749516487121582,
           "docs_searched": 1660,
           "avg_similarity": 0.44305804967880247,
           "max_similarity": 0.49845319986343384
@@ -185,7 +185,7 @@
         "f1": 0.3333333333333333,
         "ground_truth": "1945 to 1951"
       },
-      "avg_retrieval_time": 0.008592486381530762,
+      "avg_retrieval_time": 0.00766444206237793,
       "avg_similarity": 0.37473792731761935,
       "max_similarity": 0.49845319986343384,
       "avg_prompt_tokens": 859.5,
@@ -194,7 +194,7 @@
       "fusion_prompt_tokens": 174
     },
     {
-      "total_retrieval_time": 0.033097028732299805,
+      "total_retrieval_time": 0.026042938232421875,
       "total_docs_searched": 4980,
       "avg_similarity_scores": [
         0.41224491596221924,
@@ -209,21 +209,21 @@
       "subquery_metrics": [
         {
           "subquery_id": "q1",
-          "retrieval_time": 0.014835596084594727,
+          "retrieval_time": 0.008821249008178711,
           "docs_searched": 1660,
           "avg_similarity": 0.41224491596221924,
           "max_similarity": 0.6272776126861572
         },
         {
           "subquery_id": "q2",
-          "retrieval_time": 0.008932352066040039,
+          "retrieval_time": 0.008466005325317383,
           "docs_searched": 1660,
           "avg_similarity": 0.4069338858127594,
           "max_similarity": 0.6121106147766113
         },
         {
           "subquery_id": "q3",
-          "retrieval_time": 0.009329080581665039,
+          "retrieval_time": 0.008755683898925781,
           "docs_searched": 1660,
           "avg_similarity": 0.42043007016181944,
           "max_similarity": 0.6487841606140137
@@ -239,7 +239,7 @@
       "evaluation_metrics": {
         "exact_match": 0.0,
         "f1": 0.0,
-        "final_answer": "No relevant information found",
+        "final_answer": "unknown",
         "ground_truth": "the Queen's gaoler",
         "fallback_answer": "",
         "final_reason": "The document does not provide information on who helped Mary, Queen of Scots escape from Loch Leven Castle."
@@ -249,7 +249,7 @@
         "f1": 0.0,
         "ground_truth": "the Queen's gaoler"
       },
-      "avg_retrieval_time": 0.011032342910766602,
+      "avg_retrieval_time": 0.008680979410807291,
       "avg_similarity": 0.413202957312266,
       "max_similarity": 0.6487841606140137,
       "avg_prompt_tokens": 864.6666666666666,
@@ -258,7 +258,7 @@
       "fusion_prompt_tokens": 237
     },
     {
-      "total_retrieval_time": 0.017413854598999023,
+      "total_retrieval_time": 0.01634693145751953,
       "total_docs_searched": 3320,
       "avg_similarity_scores": [
         0.33050692081451416,
@@ -271,14 +271,14 @@
       "subquery_metrics": [
         {
           "subquery_id": "q1",
-          "retrieval_time": 0.008489131927490234,
+          "retrieval_time": 0.008129119873046875,
           "docs_searched": 1660,
           "avg_similarity": 0.33050692081451416,
           "max_similarity": 0.3553599715232849
         },
         {
           "subquery_id": "q2",
-          "retrieval_time": 0.008924722671508789,
+          "retrieval_time": 0.008217811584472656,
           "docs_searched": 1660,
           "avg_similarity": 0.33600698709487914,
           "max_similarity": 0.34695762395858765
@@ -303,7 +303,7 @@
         "f1": 0.0,
         "ground_truth": "Finnmark county,"
       },
-      "avg_retrieval_time": 0.008706927299499512,
+      "avg_retrieval_time": 0.008173465728759766,
       "avg_similarity": 0.3332569539546967,
       "max_similarity": 0.3553599715232849,
       "avg_prompt_tokens": 967.5,

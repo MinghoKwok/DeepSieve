@@ -7,7 +7,7 @@ q1: Who is the fictional private detective in "The Adventure of the Seven Clocks
 Reason: no relevant information found
 
 q2: Who wrote ? → Ed Sheeran and Amy Wadge
-Reason: The document states that all songs in 'Songs I Wrote with Amy' were written collaboratively by Ed Sheeran and Amy Wadge.
+Reason: The document states that all of the songs in 'Songs I Wrote with Amy' were written collaboratively by Ed Sheeran and Amy Wadge.
 
 
 Based on the above reasoning steps, what is the final answer to the original question?

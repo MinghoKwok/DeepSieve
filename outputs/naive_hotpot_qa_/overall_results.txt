@@ -1,8 +1,8 @@
 📊 Overall Performance Summary:
 - Average Exact Match: 0.0000
 - Average F1 Score: 0.0667
-- Average Retrieval Time: 0.0221s
+- Average Retrieval Time: 0.0223s
 - Average Documents Searched: 4950.2
 - Average Similarity Score: 0.3750
 - Average Prompt Tokens per Subquery: 829.63
-- Average Total Tokens per Query: 2019.40
+- Average Total Tokens per Query: 2019.80

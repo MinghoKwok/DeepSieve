@@ -43,6 +43,7 @@ from rag.graph_rag import GraphRAG_Improved
 from utils.llm_call import call_openai_chat
 from utils.metrics import count_tokens, evaluate_answer, calculate_overall_metrics
 from utils.reasoning_pipeline import plan_subqueries_with_llm, route_query_with_llm, get_fused_final_answer, substitute_variables
+from utils.data_load import load_queries, load_corpus_and_profiles
 
 def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool = True, max_reflexion_times: int = 2, dataset: str = "hotpot_qa", sample_size: int = 100, openai_model: str = "deepseek-chat", openai_api_key: str = None, openai_base_url: str = None, rag_type: str = "naive"):
     """
@@ -61,16 +62,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
     """
     # Define multiple queries and corresponding ground truth
     # Load data
-    with open(f"data/rag/{dataset}.json", "r") as f:
-        data = json.load(f)
-
-    queries_and_truth = [
-        {
-            "query": item["question"],
-            "ground_truth": item["answer"]
-        }
-        for item in data[:sample_size]
-    ]
+    queries_and_truth = load_queries(dataset, sample_size)
 
     save_dir = "outputs/"
     save_dir += rag_type
@@ -92,21 +84,9 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
         raise ValueError("❌ Please set your OPENAI_API_KEY environment variable.")
 
     # Prepare knowledge base documents
-    with open(f"data/rag/{dataset}_corpus_local.json", "r") as f:
-        data = json.load(f)
-    local_docs = [f"{item['title']}. {item['text']}" for item in data]
+    local_docs, global_docs, local_profile, global_profile = load_corpus_and_profiles(dataset)
     print(f"✅ Loaded {len(local_docs)} documents into local_docs.")
-
-    with open(f"data/rag/{dataset}_corpus_global.json", "r") as f:
-        data = json.load(f)
-    global_docs = [f"{item['title']}. {item['text']}" for item in data]
     print(f"✅ Loaded {len(global_docs)} documents into global_docs.")
-
-    # Read profiles.json
-    with open(f"data/rag/{dataset}_corpus_profiles.json", "r") as f:
-        profiles = json.load(f)
-    local_profile = profiles["local_profile"]
-    global_profile = profiles["global_profile"]
     print(f"✅ Loaded local_profile and global_profile.")
 
     merged_docs = local_docs + global_docs
