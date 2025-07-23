@@ -16,34 +16,34 @@ class GraphRAG:
         self.docs = docs
         self.embedder = SentenceTransformer(embed_model)
         self.doc_vecs = self.embedder.encode(docs, convert_to_numpy=True)
-        self.doc_map = {doc: f"doc_{i}" for i, doc in enumerate(docs)}  # 添加doc_map
+        self.doc_map = {doc: f"doc_{i}" for i, doc in enumerate(docs)}  # Add doc_map
         self.graph = self._build_knowledge_graph()
-        print(f"初始化图知识库，文档数量: {len(docs)}")
+        print(f"Initialized graph knowledge base, number of documents: {len(docs)}")
 
     def _extract_entities(self, text: str) -> List[str]:
-        """从文本中提取实体"""
-        # 简单的实体提取：假设大写开头的词组是实体
+        """Extract entities from text"""
+        # Simple entity extraction: assume capitalized phrases are entities
         entities = re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*', text)
         return list(set(entities))
 
     def _build_knowledge_graph(self) -> nx.Graph:
-        """构建知识图谱"""
+        """Build knowledge graph"""
         G = nx.Graph()
         entity_to_docs = defaultdict(set)
         
-        # 为每个文档提取实体并建立映射
+        # Extract entities for each document and build mapping
         for doc_id, doc in enumerate(self.docs):
             entities = self._extract_entities(doc)
             for entity in entities:
-                entity_to_docs[entity].add(self.doc_map[doc])  # 使用doc_map获取doc_id
+                entity_to_docs[entity].add(self.doc_map[doc])  # Use doc_map to get doc_id
                 G.add_node(entity, type='entity')
-                G.add_node(self.doc_map[doc], type='document', text=doc)  # 使用doc_map获取doc_id
+                G.add_node(self.doc_map[doc], type='document', text=doc)  # Use doc_map to get doc_id
                 G.add_edge(entity, self.doc_map[doc], weight=1.0)
 
-        # 建立实体间的关系（如果它们出现在同一文档中）
+        # Build relationships between entities (if they appear in the same document)
         for entity1 in entity_to_docs:
             for entity2 in entity_to_docs:
-                if entity1 < entity2:  # 避免重复边
+                if entity1 < entity2:  # Avoid duplicate edges
                     common_docs = entity_to_docs[entity1] & entity_to_docs[entity2]
                     if common_docs:
                         G.add_edge(entity1, entity2, weight=len(common_docs))
@@ -51,61 +51,61 @@ class GraphRAG:
         return G
 
     def _get_relevant_subgraph(self, question: str, k: int = 5) -> List[str]:
-        """获取与问题相关的子图并返回相关文档"""
-        # 从问题中提取实体
+        """Get relevant subgraph and return relevant documents"""
+        # Extract entities from the question
         question_entities = self._extract_entities(question)
         
-        # 如果没有找到实体，回退到向量检索
+        # If no entities found, fallback to vector search
         if not question_entities:
             return self._vector_search(question, k)
-            
-        # 收集与问题实体相关的所有文档节点
+        
+        # Collect all document nodes related to question entities
         relevant_docs = set()
         for entity in question_entities:
             if entity in self.graph:
-                # 使用个性化PageRank找到最相关的节点
+                # Use personalized PageRank to find most relevant nodes
                 personalization = {node: 1.0 if node == entity else 0.0 
                                 for node in self.graph.nodes()}
                 ranks = nx.pagerank(self.graph, personalization=personalization)
                 
-                # 获取文档节点
+                # Get document nodes
                 doc_ranks = {node: rank for node, rank in ranks.items() 
                            if node.startswith('doc_')}
                 
-                # 添加top-k文档
+                # Add top-k documents
                 top_docs = sorted(doc_ranks.items(), key=lambda x: x[1], reverse=True)[:k]
                 relevant_docs.update(doc_id for doc_id, _ in top_docs)
         
-        # 如果通过图检索没有找到足够的文档，补充向量检索的结果
+        # If not enough documents found by graph retrieval, supplement with vector search results
         if len(relevant_docs) < k:
             vector_docs = self._vector_search(question, k - len(relevant_docs))
-            # 使用doc_map安全地获取doc_id
+            # Use doc_map to safely get doc_id
             relevant_docs.update(self.doc_map[d] for d in vector_docs if d in self.doc_map)
         
-        # 返回文档内容
+        # Return document contents
         return [self.graph.nodes[doc_id]['text'] 
                 for doc_id in list(relevant_docs)[:k]]
 
     def _vector_search(self, question: str, k: int) -> List[str]:
-        """向量检索作为备选方案"""
+        """Vector search as a fallback"""
         q_vec = self.embedder.encode([question], convert_to_numpy=True)
         scores = cosine_similarity(q_vec, self.doc_vecs)[0]
         topk_idx = np.argsort(scores)[-k:][::-1]
         return [self.docs[i] for i in topk_idx]
 
     def rag_qa(self, question: str, k: int = 5) -> Dict:
-        """与NaiveRAG接口兼容的检索方法"""
+        """Retrieval method compatible with NaiveRAG interface"""
         start_time = time.time()
         
-        # 获取相关文档
+        # Get relevant documents
         retrieved_docs = self._get_relevant_subgraph(question, k)
         
-        # 计算文档相似度分数
+        # Compute document similarity scores
         q_vec = self.embedder.encode([question], convert_to_numpy=True)
         doc_vecs = self.embedder.encode(retrieved_docs, convert_to_numpy=True)
         scores = cosine_similarity(q_vec, doc_vecs)[0]
         
-        # 计算检索指标
+        # Compute retrieval metrics
         retrieval_time = time.time() - start_time
         
         return {
@@ -123,68 +123,68 @@ class GraphRAG:
 class GraphRAG_Improved(GraphRAG):
     def __init__(self, docs: List[str], embed_model: str = "all-MiniLM-L6-v2", max_pr_iter: int = 100):
         """
-        改进版GraphRAG
+        Improved GraphRAG
         Args:
-            docs: 文档列表
-            embed_model: 编码模型名称
-            max_pr_iter: PageRank最大迭代次数
+            docs: List of documents
+            embed_model: Encoder model name
+            max_pr_iter: Max PageRank iterations
         """
-        # 在调用父类初始化之前先初始化spaCy
+        # Initialize spaCy before calling parent init
         self.max_pr_iter = max_pr_iter
         try:
             import spacy
             self.nlp = spacy.load("en_core_web_sm")
             self.use_spacy = True
-            print("✅ 成功加载spaCy模型")
+            print("✅ spaCy model loaded successfully")
         except Exception as e:
-            print(f"⚠️ spaCy加载失败: {e}，将回退到正则表达式")
+            print(f"⚠️ spaCy loading failed: {e}, falling back to regex")
             self.use_spacy = False
-            
-        # 现在调用父类的初始化
+        
+        # Now call parent init
         super().__init__(docs, embed_model)
 
     def _extract_entities(self, text: str) -> List[str]:
-        """改进的实体提取，使用spaCy"""
+        """Improved entity extraction using spaCy"""
         if self.use_spacy:
             doc = self.nlp(text)
-            # 提取命名实体和名词短语
+            # Extract named entities and noun phrases
             entities = set()
-            # 添加命名实体
+            # Add named entities
             entities.update(ent.text for ent in doc.ents)
-            # 添加重要的名词短语
+            # Add important noun phrases
             entities.update(
                 chunk.text for chunk in doc.noun_chunks 
-                if len(chunk.text.split()) > 1  # 只保留多词短语
-                and not all(token.is_stop for token in chunk)  # 排除纯停用词
+                if len(chunk.text.split()) > 1  # Only keep multi-word phrases
+                and not all(token.is_stop for token in chunk)  # Exclude stopwords only
             )
             return list(entities)
         else:
-            # 回退到改进的正则表达式
-            # 1. 大写开头词组
+            # Fallback to improved regex
+            # 1. Capitalized phrases
             upper_entities = re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*', text)
-            # 2. 重要的小写词组（至少两个词）
+            # 2. Important lowercase phrases (at least two words)
             lower_entities = re.findall(r'\b[a-z]+\s+[a-z]+(?:\s+[a-z]+)*\b', text)
             all_entities = set(upper_entities + lower_entities)
-            # 过滤掉常见的无意义词组
+            # Filter out common meaningless phrases
             stop_patterns = {'is a', 'was a', 'has been', 'will be', 'can be'}
             return [e for e in all_entities if e.lower() not in stop_patterns]
 
     def _get_relevant_subgraph(self, question: str, k: int = 5) -> List[str]:
-        """改进的子图检索方法"""
+        """Improved subgraph retrieval method"""
         start_time = time.time()
         question_entities = self._extract_entities(question)
-        print(f"📌 从问题中提取的实体: {question_entities}")
+        print(f"📌 Entities extracted from question: {question_entities}")
         
         if not question_entities:
-            print("⚠️ 未找到实体，回退到向量检索")
+            print("⚠️ No entities found, falling back to vector search")
             return self._vector_search(question, k)
-            
+        
         relevant_docs = set()
-        graph_scores = defaultdict(float)  # 存储图检索得分
+        graph_scores = defaultdict(float)  # Store graph retrieval scores
         
         for entity in question_entities:
             if entity in self.graph:
-                # 限制PageRank最大迭代次数，避免无关扩散
+                # Limit PageRank max iterations to avoid irrelevant diffusion
                 personalization = {node: 1.0 if node == entity else 0.0 
                                 for node in self.graph.nodes()}
                 try:
@@ -192,82 +192,82 @@ class GraphRAG_Improved(GraphRAG):
                                       personalization=personalization,
                                       max_iter=self.max_pr_iter)
                     
-                    # 获取文档节点
+                    # Get document nodes
                     doc_ranks = {node: rank for node, rank in ranks.items() 
                                if node.startswith('doc_')}
                     
-                    # 累加每个实体的PageRank得分
+                    # Accumulate PageRank scores for each entity
                     for doc_id, rank in doc_ranks.items():
                         graph_scores[doc_id] += rank
                     
-                    print(f"✅ 实体 '{entity}' 成功找到相关文档")
+                    print(f"✅ Entity '{entity}' found relevant documents")
                 except Exception as e:
-                    print(f"⚠️ PageRank计算失败: {e}")
+                    print(f"⚠️ PageRank calculation failed: {e}")
                     continue
         
-        # 如果图检索找到了文档
+        # If graph retrieval found documents
         if graph_scores:
-            # 获取初步的top-k*2文档
+            # Get initial top-k*2 documents
             candidate_docs = sorted(graph_scores.items(), 
                                  key=lambda x: x[1], 
                                  reverse=True)[:k*2]
             
-            # 使用向量相似度重排序
+            # Re-rank using vector similarity
             texts = [self.graph.nodes[doc_id]["text"] for doc_id, _ in candidate_docs]
-            if texts:  # 确保有文档再编码
+            if texts:  # Ensure there are documents to encode
                 doc_vecs = self.embedder.encode(texts, convert_to_numpy=True)
                 q_vec = self.embedder.encode([question], convert_to_numpy=True)
                 sims = cosine_similarity(q_vec, doc_vecs)[0]
                 
-                # 综合考虑图得分和向量相似度
+                # Combine graph score and vector similarity
                 final_scores = [(doc_id, 0.5 * graph_score + 0.5 * sims[i])
                               for i, (doc_id, graph_score) in enumerate(candidate_docs)]
                 
-                # 取top-k
+                # Take top-k
                 top_docs = sorted(final_scores, key=lambda x: x[1], reverse=True)[:k]
                 relevant_docs.update(doc_id for doc_id, _ in top_docs)
                 
-                print(f"📊 图检索找到 {len(relevant_docs)} 个相关文档")
+                print(f"📊 Graph retrieval found {len(relevant_docs)} relevant documents")
         
-        # 如果需要补充文档
+        # Supplement documents if needed
         if len(relevant_docs) < k:
             needed = k - len(relevant_docs)
-            print(f"⚠️ 图检索文档不足，需要补充 {needed} 个文档")
+            print(f"⚠️ Not enough documents from graph retrieval, supplementing {needed} documents")
             
-            # 获取向量检索结果
-            vector_docs = self._vector_search(question, needed * 2)  # 多检索一些候选
+            # Get vector search results
+            vector_docs = self._vector_search(question, needed * 2)  # Retrieve more candidates
             
-            # 计算向量相似度
+            # Compute vector similarity
             vector_vecs = self.embedder.encode(vector_docs, convert_to_numpy=True)
             q_vec = self.embedder.encode([question], convert_to_numpy=True)
             sims = cosine_similarity(q_vec, vector_vecs)[0]
             
-            # 按相似度排序并过滤已有文档
+            # Sort by similarity and filter out existing documents
             scored_docs = [(doc, sim) for doc, sim in zip(vector_docs, sims)
                           if self.doc_map[doc] not in relevant_docs]
             scored_docs.sort(key=lambda x: x[1], reverse=True)
             
-            # 添加top-needed文档
+            # Add top-needed documents
             fallback_docs = {self.doc_map[doc] for doc, _ in scored_docs[:needed]}
             relevant_docs.update(fallback_docs)
-            print(f"📊 向量检索补充了 {len(fallback_docs)} 个文档")
+            print(f"📊 Vector search supplemented {len(fallback_docs)} documents")
         
         retrieval_time = time.time() - start_time
-        print(f"⏱️ 总检索时间: {retrieval_time:.2f}秒")
+        print(f"⏱️ Total retrieval time: {retrieval_time:.2f}s")
         
         return [self.graph.nodes[doc_id]['text'] 
                 for doc_id in list(relevant_docs)[:k]]
 
     def _vector_search(self, question: str, k: int) -> List[str]:
-        """改进的向量检索，增加调试信息"""
+        """Improved vector search with debug info"""
         start_time = time.time()
         q_vec = self.embedder.encode([question], convert_to_numpy=True)
         scores = cosine_similarity(q_vec, self.doc_vecs)[0]
         topk_idx = np.argsort(scores)[-k:][::-1]
         topk_scores = scores[topk_idx]
         
-        print(f"📊 向量检索得分范围: {topk_scores.min():.3f} - {topk_scores.max():.3f}")
+        print(f"📊 Vector search score range: {topk_scores.min():.3f} - {topk_scores.max():.3f}")
         retrieval_time = time.time() - start_time
-        print(f"⏱️ 向量检索时间: {retrieval_time:.2f}秒")
+        print(f"⏱️ Vector search time: {retrieval_time:.2f}s")
         
         return [self.docs[i] for i in topk_idx]

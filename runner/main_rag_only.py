@@ -44,17 +44,17 @@ from rag.graph_rag import GraphRAG_Improved
 # LLM 调用
 
 def call_openai_chat(prompt: str, api_key: str, model: str, base_url: str, max_retries: int = 3) -> str:
-    """调用 OpenAI Chat API 的函数，包含重试机制
+    """Call OpenAI Chat API with retry mechanism
 
     Args:
-        prompt: 提示文本
-        api_key: API密钥
-        model: 模型名称
-        base_url: API基础URL
-        max_retries: 最大重试次数
+        prompt: Prompt text
+        api_key: API key
+        model: Model name
+        base_url: API base URL
+        max_retries: Max retry times
 
     Returns:
-        str: API响应的文本内容
+        str: API response content
     """
     url = f"{base_url}/chat/completions"
     headers = {
@@ -70,8 +70,8 @@ def call_openai_chat(prompt: str, api_key: str, model: str, base_url: str, max_r
     session = requests.Session()
     retry_strategy = requests.adapters.Retry(
         total=max_retries,
-        backoff_factor=2,  # 增加退避时间
-        status_forcelist=[500, 502, 503, 504, 408, 429],  # 添加超时和限流状态码
+        backoff_factor=2,  # Increase backoff time
+        status_forcelist=[500, 502, 503, 504, 408, 429],  # Add timeout and rate limit status codes
         allowed_methods=["POST"]
     )
     adapter = requests.adapters.HTTPAdapter(max_retries=retry_strategy, pool_maxsize=100)
@@ -83,24 +83,24 @@ def call_openai_chat(prompt: str, api_key: str, model: str, base_url: str, max_r
         response.raise_for_status()  # 检查响应状态
         return response.json()["choices"][0]["message"]["content"]
     except requests.exceptions.RequestException as e:
-        print(f"🔴 API请求错误: {str(e)}")
+        print(f"🔴 API request error: {str(e)}")
         if isinstance(e, (requests.exceptions.ChunkedEncodingError, requests.exceptions.ReadTimeout)):
-            print("检测到连接错误，正在重试...")
-            # 对于连接错误，我们特别处理
+            print("Detected connection error, retrying...")
+            # Special handling for connection errors
             for i in range(max_retries):
                 try:
-                    print(f"重试 #{i+1}...")
+                    print(f"Retry #{i+1}...")
                     time.sleep(2 ** i)  # 指数退避
                     response = session.post(url, headers=headers, json=payload, timeout=60)
                     response.raise_for_status()
                     return response.json()["choices"][0]["message"]["content"]
                 except requests.exceptions.RequestException as retry_e:
-                    print(f"重试 #{i+1} 失败: {str(retry_e)}")
+                    print(f"Retry #{i+1} failed: {str(retry_e)}")
                     if i == max_retries - 1:  # 如果是最后一次重试
-                        print("所有重试都失败了")
+                        print("All retries failed")
                         return ""
     except Exception as e:
-        print(f"🔴 其他错误: {str(e)}")
+        print(f"🔴 Other error: {str(e)}")
         return ""
     finally:
         session.close()
@@ -142,7 +142,7 @@ Only output valid JSON. Do not add any explanation or markdown code block marker
 
     response = call_openai_chat(prompt, api_key, model, base_url)
     try:
-        # 清理响应中可能存在的markdown代码块标记
+        # Remove possible markdown code block markers from response
         cleaned_response = str(response).strip()
         if cleaned_response.startswith("```json"):
             cleaned_response = cleaned_response[7:]
@@ -152,7 +152,7 @@ Only output valid JSON. Do not add any explanation or markdown code block marker
         
         result = json.loads(cleaned_response)
         if "subqueries" not in result:
-            print("⚠️ 响应中缺少subqueries字段:")
+            print("⚠️ Missing subqueries field in response:")
             print(result)
             return {"subqueries": []}
         return result
@@ -165,8 +165,8 @@ Only output valid JSON. Do not add any explanation or markdown code block marker
 
 def substitute_variables(query: str, variable_values: dict) -> str:
     """
-    替换查询中的变量为其实际值
-    例如：将 "What country is [birthplace] in?" 中的 [birthplace] 替换为实际值
+    Replace variables in the query with their actual values.
+    For example: replace "What country is [birthplace] in?" with the actual value of [birthplace].
     """
     result = query
     for var_name, value in variable_values.items():
@@ -176,19 +176,19 @@ def substitute_variables(query: str, variable_values: dict) -> str:
 
 def route_query_with_llm(query: str, local_profile: str, global_profile: str,
                          api_key: str, model: str, base_url: str, fail_history: str) -> str:
-    """路由查询到合适的知识库
+    """Route the query to the appropriate knowledge base
 
     Args:
-        query: 查询文本
-        local_profile: 本地知识库描述
-        global_profile: 全局知识库描述
-        api_key: API密钥
-        model: 模型名称
-        base_url: API基础URL
-        fail_history: 失败历史
+        query: Query text
+        local_profile: Local knowledge base description
+        global_profile: Global knowledge base description
+        api_key: API key
+        model: Model name
+        base_url: API base URL
+        fail_history: Failure history
 
     Returns:
-        str: 路由结果 ("local" 或 "global")
+        str: Routing result ("local" or "global")
     """
     prompt = f"""You are a routing assistant. Your task is to decide whether a query should be answered using LOCAL knowledge or GLOBAL knowledge.
 
@@ -209,16 +209,16 @@ Do not add any explanation or extra words."""
     try:
         response = call_openai_chat(prompt, api_key, model, base_url)
         if not response:  # 如果响应为空
-            print("⚠️ 路由响应为空，默认使用local路由")
+            print("⚠️ Routing response is empty, defaulting to local routing")
             return "local"
         
         route = response.strip().lower()
         if route not in {"local", "global"}:
-            print(f"⚠️ 意外的路由输出: {route}，默认使用local路由")
+            print(f"⚠️ Unexpected routing output: {route}, defaulting to local routing")
             return "local"
         return route
     except Exception as e:
-        print(f"⚠️ 路由过程出错: {str(e)}，默认使用local路由")
+        print(f"⚠️ Routing error: {str(e)}, defaulting to local routing")
         return "local"
 
 
@@ -226,10 +226,10 @@ Do not add any explanation or extra words."""
 
 def normalize_answer(s: str) -> str:
     """
-    规范化答案字符串，用于比较
-    1. 转换为小写
-    2. 移除标点符号和多余空格
-    3. 移除冠词(a, an, the)等停用词
+    Normalize answer string for comparison
+    1. Lowercase
+    2. Remove punctuation and extra spaces
+    3. Remove stopwords like a, an, the
     """
     import re
     from string import punctuation
@@ -251,13 +251,13 @@ def normalize_answer(s: str) -> str:
 
 def compute_exact_match(prediction: str, ground_truth: str) -> float:
     """
-    计算Exact Match分数
+    Compute Exact Match score
     """
     return float(normalize_answer(prediction) == normalize_answer(ground_truth))
 
 def compute_f1(prediction: str, ground_truth: str) -> float:
     """
-    计算F1分数
+    Compute F1 score
     """
     prediction_tokens = normalize_answer(prediction).split()
     ground_truth_tokens = normalize_answer(ground_truth).split()
@@ -276,7 +276,7 @@ def compute_f1(prediction: str, ground_truth: str) -> float:
 
 def evaluate_answer(prediction: str, ground_truth: str) -> dict:
     """
-    评估预测答案的质量
+    Evaluate the quality of the predicted answer
     """
     return {
         "exact_match": compute_exact_match(prediction, ground_truth),
@@ -292,7 +292,7 @@ def count_tokens(text: str, model: str = "gpt-3.5-turbo") -> int:
 
 def calculate_overall_metrics(all_metrics):
     """
-    计算所有查询的平均性能指标
+    Calculate average performance metrics for all queries
     """
     total_queries = len(all_metrics)
     if total_queries == 0:
@@ -311,17 +311,17 @@ def calculate_overall_metrics(all_metrics):
 
 
 def convert_to_query_format(df, dataset_name):
-    """将不同数据集的DataFrame转换为统一的查询格式"""
+    """Convert different dataset DataFrames to a unified query format"""
     if dataset_name in ["hotpot_qa", "trivia_qa", "gsm8k", "sotu_qa"]:
-        # 这些数据集已经使用 question/answer 格式
+        # These datasets already use question/answer format
         return [{"query": row["question"], "ground_truth": row["answer"]} 
                 for _, row in df.iterrows()]
     elif dataset_name in ["physics_question", "sports_understanding", "disfl_qa", "strategy_qa"]:
-        # 这些数据集使用 input/target 格式
+        # These datasets use input/target format
         return [{"query": row["input"], "ground_truth": row["target"]} 
                 for _, row in df.iterrows()]
     elif dataset_name == "fever":
-        # FEVER数据集使用 claim/label 格式
+        # FEVER dataset uses claim/label format
         return [{"query": row["claim"], "ground_truth": row["label"]} 
                 for _, row in df.iterrows()]
     else:
@@ -373,21 +373,21 @@ Only output valid JSON. Do not add any explanation or markdown code block marker
 
 def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool = True, max_reflexion_times: int = 2, dataset: str = "hotpot_qa", sample_size: int = 100, openai_model: str = "deepseek-chat", openai_api_key: str = None, openai_base_url: str = None, rag_type: str = "naive"):
     """
-    主函数
+    Main function
     Args:
-        decompose: 是否分解查询
-        use_routing: 是否使用路由
-        use_reflection: 是否使用反思机制
-        max_reflexion_times: 最大反思次数
-        dataset: 数据集名称
-        sample_size: 样本大小
-        openai_model: OpenAI模型名称
-        openai_api_key: OpenAI API密钥
-        openai_base_url: OpenAI API基础URL
-        rag_type: RAG类型，可选值为"naive" 或 "graph"
+        decompose: Whether to decompose the query
+        use_routing: Whether to use routing
+        use_reflection: Whether to use reflection mechanism
+        max_reflexion_times: Max reflection times
+        dataset: Dataset name
+        sample_size: Sample size
+        openai_model: OpenAI model name
+        openai_api_key: OpenAI API key
+        openai_base_url: OpenAI API base URL
+        rag_type: RAG type, can be "naive" or "graph"
     """
-    # 定义多个查询和对应的ground truth
-    # 加载数据
+    # Define multiple queries and corresponding ground truth
+    # Load data
     with open(f"data/rag/{dataset}.json", "r") as f:
         data = json.load(f)
 
@@ -418,7 +418,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
     if not openai_api_key:
         raise ValueError("❌ Please set your OPENAI_API_KEY environment variable.")
 
-    # 准备知识库文档
+    # Prepare knowledge base documents
     with open(f"data/rag/{dataset}_corpus_local.json", "r") as f:
         data = json.load(f)
     local_docs = [f"{item['title']}. {item['text']}" for item in data]
@@ -429,7 +429,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
     global_docs = [f"{item['title']}. {item['text']}" for item in data]
     print(f"✅ Loaded {len(global_docs)} documents into global_docs.")
 
-    # 读取 profiles.json
+    # Read profiles.json
     with open(f"data/rag/{dataset}_corpus_profiles.json", "r") as f:
         profiles = json.load(f)
     local_profile = profiles["local_profile"]
@@ -438,7 +438,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
 
     merged_docs = local_docs + global_docs
 
-    # 初始化RAG系统
+    # Initialize RAG system
     if use_routing:
         if rag_type == "naive":
             local_rag = NaiveRAG(local_docs)
@@ -447,40 +447,40 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
             local_rag = GraphRAG_Improved(local_docs)
             global_rag = GraphRAG_Improved(global_docs)
         else:
-            raise ValueError(f"不支持的 RAG 类型: {rag_type}")
-        print(f"🔍 使用路由模式：分别初始化local和global知识库，RAG类型：{rag_type}")
+            raise ValueError(f"Unsupported RAG type: {rag_type}")
+        print(f"🔍 Using routing mode: initialized local and global knowledge bases, RAG type: {rag_type}")
     else:
-        # 合并数据集
+        # Merge datasets
         if rag_type == "naive":
             merged_rag = NaiveRAG(merged_docs)
         elif rag_type == "graph":
             merged_rag = GraphRAG_Improved(merged_docs)
         else:
-            raise ValueError(f"不支持的 RAG 类型: {rag_type}")
-        print(f"🔍 使用无路由模式：合并local和global知识库，RAG类型：{rag_type}")
+            raise ValueError(f"Unsupported RAG type: {rag_type}")
+        print(f"🔍 Using no-routing mode: merged local and global knowledge bases, RAG type: {rag_type}")
 
-    all_metrics = []  # 存储所有查询的性能指标
+    all_metrics = []  # Store all query performance metrics
 
-    # 处理每个查询
+    # Process each query
     for idx, query_info in enumerate(queries_and_truth, 1):
         multi_hop_query = query_info["query"]
         ground_truth = query_info["ground_truth"]
         
-        print(f"\n📝 处理查询 {idx}/{len(queries_and_truth)}:")
+        print(f"\n📝 Processing query {idx}/{len(queries_and_truth)}:")
         print(f"Query: {multi_hop_query}")
         print(f"Ground Truth: {ground_truth}")
         
-        # 初始化variable_values字典
+        # Initialize variable_values dict
         variable_values = {}
         
         if decompose:
-            # 获取带依赖关系的子查询计划
+            # Get subquery plan with dependencies
             query_plan = plan_subqueries_with_llm(multi_hop_query, openai_api_key, openai_model, openai_base_url)
             if not query_plan or not query_plan["subqueries"]:
-                print("❌ 子问题规划失败，跳过当前查询。")
+                print("❌ Subquery planning failed, skipping current query.")
                 continue
         else:
-            # 不分解查询，直接作为单个问题处理
+            # Do not decompose, treat as a single question
             query_plan = {
                 "subqueries": [{
                     "id": "q1",
@@ -512,34 +512,34 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
             }
         }
 
-        # 按顺序处理子查询，处理依赖关系
+        # Process subqueries in order, handle dependencies
         for subquery_info in query_plan["subqueries"]:
             subquery_start_time = time.time()
             subquery_id = subquery_info["id"]
             original_query = subquery_info["query"]
             
-            # 检查并等待所有依赖项完成
+            # Check and wait for all dependencies to complete
             if subquery_info["depends_on"]:
-                print(f"\n⏳ 处理查询 {subquery_id} 的依赖项: {subquery_info['depends_on']}")
+                print(f"\n⏳ Processing dependencies for query {subquery_id}: {subquery_info['depends_on']}")
                 
-            # 替换查询中的变量
+            # Replace variables in the query
             current_variables = {}
             for var in subquery_info.get("variables", []):
                 var_name = var["name"]
                 source_query = var["source_query"]
                 if source_query not in variable_values:
-                    print(f"❌ 错误：查询 {subquery_id} 依赖于未完成的查询 {source_query}")
+                    print(f"❌ Error: Query {subquery_id} depends on an incomplete query {source_query}")
                     continue
                 current_variables[var_name] = variable_values[source_query]
             
-            # 替换变量后的实际查询
+            # Actual query after variable substitution
             actual_query = substitute_variables(original_query, current_variables)
-            print(f"\n🔍 处理查询 {subquery_id}: {actual_query}")
-            print(f"原始查询: {original_query}")
+            print(f"\n🔍 Processing query {subquery_id}: {actual_query}")
+            print(f"Original query: {original_query}")
             if current_variables:
-                print(f"替换变量: {current_variables}")
+                print(f"Variable substitution: {current_variables}")
 
-            # Loop for reflexion
+            # Loop for reflection
             fail_history = ""
             left_reflexion_times = max_reflexion_times
             while True and left_reflexion_times > 0:
@@ -558,7 +558,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                 try:
                     retrieved = rag.rag_qa(actual_query, k=5)
                     
-                    # 收集性能指标
+                    # Collect performance metrics
                     metrics = retrieved["metrics"]
                     performance_metrics["total_retrieval_time"] += metrics["retrieval_time"]
                     performance_metrics["total_docs_searched"] += metrics["total_docs_searched"]
@@ -621,23 +621,23 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                         reason = parsed_response["reason"].strip()
                         success = int(parsed_response["success"])
                         
-                        # 存储答案供后续查询使用
+                        # Store answer for subsequent queries
                         if success == 1:
                             variable_values[subquery_id] = answer
-                            print(f"提取的答案: {answer}")
-                            print(f"推理过程: {reason}")
-                            print(f"是否成功: {success}")
+                            print(f"Extracted answer: {answer}")
+                            print(f"Reasoning: {reason}")
+                            print(f"Success: {success}")
                         else:
                             variable_values[subquery_id] = ""
                             fail_history += f"Fail History: Last routing failed because {reason}. Last routing result is {route}. So please try another routing choice, don't choose {route} again."
                         
                     except (json.JSONDecodeError, KeyError) as e:
-                        print(f"⚠️ 解析答案失败: {str(e)}")
-                        print(f"原始响应: {response}")
+                        print(f"⚠️ Failed to parse answer: {str(e)}")
+                        print(f"Raw response: {response}")
                         answer, reason = f"Error: {str(e)}", ""
                         success = 0
                     
-                    # 更新token统计
+                    # Update token statistics
                     performance_metrics["total_prompt_tokens"] += token_count
                     performance_metrics["prompt_token_counts"].append(token_count)
                     
@@ -657,29 +657,29 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                     fused_answer_texts.append(f"{subquery_id}: {actual_query} → {answer} (reason: {reason})")
                     
                 except Exception as e:
-                    print(f"⚠️ 处理查询时发生错误: {str(e)}")
+                    print(f"⚠️ Error occurred while processing query: {str(e)}")
                     answer, retrieved = f"Error: {str(e)}", {"docs": [], "doc_scores": []}
                     success = 0  # 设置success为0
 
                 if success == 1 or use_routing == False or use_reflection == False or left_reflexion_times <= 0:
                     break   # 如果成功或者不使用路由或者不使用反射或者反射次数用完，则跳出循环
 
-        # 计算汇总指标
+        # Compute summary metrics
         performance_metrics["avg_retrieval_time"] = performance_metrics["total_retrieval_time"] / len(query_plan["subqueries"])
         performance_metrics["avg_similarity"] = np.mean(performance_metrics["avg_similarity_scores"])
         performance_metrics["max_similarity"] = np.max(performance_metrics["max_similarity_scores"])
         
-        # 计算token统计指标
+        # Compute token statistics
         performance_metrics["avg_prompt_tokens"] = performance_metrics["total_prompt_tokens"] / len(query_plan["subqueries"])
         performance_metrics["max_prompt_tokens"] = max(performance_metrics["prompt_token_counts"], default=0)
         performance_metrics["min_prompt_tokens"] = min(performance_metrics["prompt_token_counts"], default=0)
 
-        # 获取 fallback（最后一跳）的答案（用于对比分析）
+        # Get fallback (last hop) answer (for comparison)
         fallback_answer = results[-1]["answer"] if results else ""
         performance_metrics["evaluation_metrics"]["fallback_answer"] = fallback_answer
 
 
-        # 获取最终答案（融合所有 reasoning 步骤）
+        # Get final answer (fusing all reasoning steps)
         final_answer, final_reason, fusion_token_count, fusion_prompt = get_fused_final_answer(
             multi_hop_query, results,
             api_key=openai_api_key,
@@ -694,23 +694,23 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
         performance_metrics["prompt_token_counts"].append(fusion_token_count)
 
         
-        # 计算评估指标
+        # Compute evaluation metrics
         eval_results = evaluate_answer(final_answer, ground_truth)
         eval_results_fallback = evaluate_answer(fallback_answer, ground_truth)
         performance_metrics["evaluation_metrics"].update(eval_results)
         performance_metrics["evaluation_metrics_fallback"].update(eval_results_fallback)
         
-        # 保存当前查询的结果
+        # Save current query results
         query_results_path = os.path.join(save_dir, f"query_{idx}_results.jsonl")
         with open(query_results_path, "w") as f:
-            # 第1条：Query metadata
+            # 1st: Query metadata
             f.write(json.dumps({
                 "type": "query_info",
                 "query": multi_hop_query,
                 "ground_truth": ground_truth
             }) + "\n")
 
-            # 第2条：Final answer summary
+            # 2nd: Final answer summary
             f.write(json.dumps({
                 "type": "final_answer",
                 "final_answer": final_answer,
@@ -720,7 +720,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                 "fusion_equals_fallback": fallback_answer.strip().lower() == final_answer.strip().lower()
             }) + "\n")
 
-            # 第3条：Evaluation metrics
+            # 3rd: Evaluation metrics
             f.write(json.dumps({
                 "type": "evaluation_metrics",
                 "fusion": {
@@ -733,7 +733,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                 }
             }) + "\n")
 
-            # 第4条：Performance metrics
+            # 4th: Performance metrics
             f.write(json.dumps({
                 "type": "performance_metrics",
                 "total_retrieval_time": performance_metrics["total_retrieval_time"],
@@ -749,7 +749,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                 }
             }) + "\n")
 
-            # 第5条：Subquery performance details
+            # 5th: Subquery performance details
             for metrics in performance_metrics["subquery_metrics"]:
                 f.write(json.dumps({
                     "type": "subquery_metric",
@@ -760,7 +760,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                     "max_similarity": metrics["max_similarity"]
                 }) + "\n")
 
-            # 第6条：Execution results (per subquery)
+            # 6th: Execution results (per subquery)
             for r in results:
                 f.write(json.dumps({
                     "type": "execution_result",
@@ -780,13 +780,13 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
                     ]
                 }) + "\n")
 
-            # 第7条：Answer chain
+            # 7th: Answer chain
             for step in fused_answer_texts:
                 f.write(json.dumps({
                     "type": "fused_answer_step",
                     "text": step
                 }) + "\n")        
-        # 保存融合提示
+        # Save fusion prompt
         fusion_prompt_path = os.path.join(save_dir, f"query_{idx}_fusion_prompt.txt")
         with open(fusion_prompt_path, "w") as f_prompt:
             f_prompt.write(fusion_prompt)
@@ -794,10 +794,10 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
 
         all_metrics.append(performance_metrics)
 
-    # 计算并保存整体性能指标
+    # Compute and save overall performance metrics
     overall_metrics = calculate_overall_metrics(all_metrics)
     
-    # 保存整体结果
+    # Save overall results
     overall_txt_path = os.path.join(save_dir, "overall_results.txt")
     with open(overall_txt_path, "w") as f:
         f.write("📊 Overall Performance Summary:\n")
@@ -819,7 +819,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
             "all_query_metrics": all_metrics
         }, f, indent=2)
 
-    # 更新控制台输出
+    # Update console output
     print("\n📊 Overall Performance Summary:")
     print(f"- Average Exact Match: {overall_metrics['avg_exact_match']:.4f}")
     print(f"- Average F1 Score: {overall_metrics['avg_f1']:.4f}")
@@ -837,7 +837,7 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
 
 
 if __name__ == "__main__":
-    # 默认使用分解和路由模式
+    # Default to decompose and routing mode
     main(decompose=True, 
          use_routing=True, 
          use_reflection=True, 

@@ -19,21 +19,21 @@ class NaiveRAG:
         self.docs = docs
         self.embedder = SentenceTransformer(embed_model)
         self.doc_vecs = self.embedder.encode(docs, convert_to_numpy=True)
-        print(f"初始化知识库，文档数量: {len(docs)}")
+        print(f"Initialized knowledge base, number of documents: {len(docs)}")
 
     def rag_qa(self, question: str, k: int = 5) -> Dict:
         start_time = time.time()
         
-        # 编码问题
+        # Encode the question
         q_vec = self.embedder.encode([question], convert_to_numpy=True)
         
-        # 计算相似度
+        # Calculate similarity
         scores = cosine_similarity(q_vec, self.doc_vecs)[0]
         topk_idx = np.argsort(scores)[-k:][::-1]
         topk_docs = [self.docs[i] for i in topk_idx]
         topk_scores = [float(scores[i]) for i in topk_idx]
         
-        # 计算检索指标
+        # Compute retrieval metrics
         retrieval_time = time.time() - start_time
         avg_similarity = np.mean(topk_scores)
         max_similarity = np.max(topk_scores)
