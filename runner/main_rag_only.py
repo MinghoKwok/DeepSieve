@@ -251,43 +251,7 @@ def process_subqueries(performance_metrics, query_plan, variable_values, local_r
 
     return performance_metrics
 
-def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool = True, max_reflexion_times: int = 2, dataset: str = "hotpot_qa", sample_size: int = 100, openai_model: str = "deepseek-chat", openai_api_key: str = None, openai_base_url: str = None, rag_type: str = "naive"):
-    """
-    Main function
-    Args:
-        decompose: Whether to decompose the query
-        use_routing: Whether to use routing
-        use_reflection: Whether to use reflection mechanism
-        max_reflexion_times: Max reflection times
-        dataset: Dataset name
-        sample_size: Sample size
-        openai_model: OpenAI model name
-        openai_api_key: OpenAI API key
-        openai_base_url: OpenAI API base URL
-        rag_type: RAG type, can be "naive" or "graph"
-    """
-    # Load data
-    queries_and_truth = load_queries(dataset, sample_size)
-    save_dir = get_save_dir(decompose, use_routing, use_reflection, dataset, rag_type)
-    os.makedirs(save_dir, exist_ok=True)
-
-    openai_model = openai_model
-    openai_api_key = openai_api_key
-    openai_base_url = openai_base_url
-    if not openai_api_key:
-        raise ValueError("❌ Please set your OPENAI_API_KEY environment variable.")
-
-    # Prepare knowledge base documents
-    local_docs, global_docs, local_profile, global_profile = load_corpus_and_profiles(dataset)
-    print(f"✅ Loaded {len(local_docs)} documents into local_docs.")
-    print(f"✅ Loaded {len(global_docs)} documents into global_docs.")
-    print(f"✅ Loaded local_profile and global_profile.")
-
-    # Initialize RAG system
-    local_rag, global_rag, merged_rag = initialize_rag_system(rag_type, use_routing, local_docs, global_docs)
-
-    all_metrics = []  # Store all query performance metrics
-
+def single_query_execution(decompose, all_metrics, queries_and_truth, local_rag, global_rag, merged_rag, use_routing, use_reflection, max_reflexion_times, local_profile, global_profile, openai_api_key, openai_model, openai_base_url, save_dir):
     # Process each query
     for idx, query_info in enumerate(queries_and_truth, 1):
         multi_hop_query = query_info["query"]
@@ -330,9 +294,48 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
         # Process subqueries in order, handle dependencies
         performance_metrics = process_subqueries(performance_metrics, query_plan, variable_values, local_rag, global_rag, merged_rag, use_routing, use_reflection, max_reflexion_times, local_profile, global_profile, openai_api_key, openai_model, openai_base_url, save_dir, idx, multi_hop_query, ground_truth, results, fused_answer_texts)
         all_metrics.append(performance_metrics)
+    
+    return all_metrics
 
+def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool = True, max_reflexion_times: int = 2, dataset: str = "hotpot_qa", sample_size: int = 100, openai_model: str = "deepseek-chat", openai_api_key: str = None, openai_base_url: str = None, rag_type: str = "naive"):
+    """
+    Main function
+    Args:
+        decompose: Whether to decompose the query
+        use_routing: Whether to use routing
+        use_reflection: Whether to use reflection mechanism
+        max_reflexion_times: Max reflection times
+        dataset: Dataset name
+        sample_size: Sample size
+        openai_model: OpenAI model name
+        openai_api_key: OpenAI API key
+        openai_base_url: OpenAI API base URL
+        rag_type: RAG type, can be "naive" or "graph"
+    """
+    # Load data
+    queries_and_truth = load_queries(dataset, sample_size)
+    save_dir = get_save_dir(decompose, use_routing, use_reflection, dataset, rag_type)
+    os.makedirs(save_dir, exist_ok=True)
 
+    openai_model = openai_model
+    openai_api_key = openai_api_key
+    openai_base_url = openai_base_url
+    if not openai_api_key:
+        raise ValueError("❌ Please set your OPENAI_API_KEY environment variable.")
 
+    # Prepare knowledge base documents
+    local_docs, global_docs, local_profile, global_profile = load_corpus_and_profiles(dataset)
+    print(f"✅ Loaded {len(local_docs)} documents into local_docs.")
+    print(f"✅ Loaded {len(global_docs)} documents into global_docs.")
+    print(f"✅ Loaded local_profile and global_profile.")
+
+    # Initialize RAG system
+    local_rag, global_rag, merged_rag = initialize_rag_system(rag_type, use_routing, local_docs, global_docs)
+
+    all_metrics = []  # Store all query performance metrics
+    
+
+    all_metrics = single_query_execution(decompose, all_metrics, queries_and_truth, local_rag, global_rag, merged_rag, use_routing, use_reflection, max_reflexion_times, local_profile, global_profile, openai_api_key, openai_model, openai_base_url, save_dir)
     # Compute and save overall performance metrics
     overall_metrics = calculate_overall_metrics(all_metrics)
     
