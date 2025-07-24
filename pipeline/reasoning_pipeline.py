@@ -24,7 +24,17 @@ __all__ = [
 
 
 
-def plan_subqueries_with_llm(query: str, api_key: str, model: str, base_url: str) -> dict:
+def plan_subqueries_with_llm(decompose: bool, query: str, api_key: str, model: str, base_url: str) -> dict:
+    if decompose == False: 
+        # Do not decompose, treat as a single question
+        return{"subqueries": [{
+                    "id": "q1",
+                    "query": query,
+                    "depends_on": [],
+                    "variables": []
+                }]}
+
+    # Decompose the query into a sequence of dependent sub-questions
     prompt = f"""You are a reasoning planner. Your task is to decompose a multi-hop question into a sequence of dependent sub-questions.
 For each sub-question, you should:
 1. Identify any variables that need to be filled from previous sub-questions' answers

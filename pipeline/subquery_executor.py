@@ -45,15 +45,6 @@ def execute_subquery(
     }
     token_count = 0
     current_variables = {}
-    performance_metrics = {
-        "total_retrieval_time": 0,
-        "total_docs_searched": 0,
-        "avg_similarity_scores": [],
-        "max_similarity_scores": [],
-        "subquery_metrics": [],
-        "total_prompt_tokens": 0,
-        "prompt_token_counts": [],
-    }
     results = []
     fused_answer_texts = []
 
@@ -102,10 +93,6 @@ def execute_subquery(
             
             # Collect performance metrics
             metrics = retrieved["metrics"]
-            performance_metrics["total_retrieval_time"] += metrics["retrieval_time"]
-            performance_metrics["total_docs_searched"] += metrics["total_docs_searched"]
-            performance_metrics["avg_similarity_scores"].append(metrics["avg_similarity"])
-            performance_metrics["max_similarity_scores"].append(metrics["max_similarity"])
             
             subquery_metrics = {
                 "subquery_id": subquery_id,
@@ -114,7 +101,6 @@ def execute_subquery(
                 "avg_similarity": metrics["avg_similarity"],
                 "max_similarity": metrics["max_similarity"]
             }
-            performance_metrics["subquery_metrics"].append(subquery_metrics)
             
             prompt = f"""Answer the following question based on the provided documents.
 
@@ -150,7 +136,7 @@ Documents:
             
             response = call_openai_chat(prompt, openai_api_key, openai_model, openai_base_url)
             try:
-                # 清理响应中可能存在的markdown代码块标记
+                # Clean the response of markdown code block markers
                 cleaned_response = response.strip()
                 if cleaned_response.startswith("```json"):
                     cleaned_response = cleaned_response[7:]
@@ -180,10 +166,7 @@ Documents:
                 reason = ""
                 success = 0
             
-            # Update token statistics
-            performance_metrics["total_prompt_tokens"] += token_count
-            performance_metrics["prompt_token_counts"].append(token_count)
-            
+            # Store the results of this subquery
             results.append({
                 "subquery_id": subquery_id,
                 "original_query": original_query,
@@ -218,7 +201,6 @@ Documents:
             break   
 
     return {
-        "performance_metrics": performance_metrics,
         "answer": answer,
         "reason": reason,
         "success": success,

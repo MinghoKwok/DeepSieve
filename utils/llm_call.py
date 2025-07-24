@@ -44,8 +44,8 @@ def call_openai_chat(prompt: str, api_key: str, model: str, base_url: str, max_r
     session.mount("https://", adapter)
     
     try:
-        response = session.post(url, headers=headers, json=payload, timeout=60)  # 增加超时时间到60秒
-        response.raise_for_status()  # 检查响应状态
+        response = session.post(url, headers=headers, json=payload, timeout=60)  # Increase timeout to 60 seconds
+        response.raise_for_status()  # Check response status
         return response.json()["choices"][0]["message"]["content"]
     except requests.exceptions.RequestException as e:
         print(f"🔴 API request error: {str(e)}")
@@ -55,13 +55,13 @@ def call_openai_chat(prompt: str, api_key: str, model: str, base_url: str, max_r
             for i in range(max_retries):
                 try:
                     print(f"Retry #{i+1}...")
-                    time.sleep(2 ** i)  # 指数退避
+                    time.sleep(2 ** i)  # Exponential backoff
                     response = session.post(url, headers=headers, json=payload, timeout=60)
                     response.raise_for_status()
                     return response.json()["choices"][0]["message"]["content"]
                 except requests.exceptions.RequestException as retry_e:
                     print(f"Retry #{i+1} failed: {str(retry_e)}")
-                    if i == max_retries - 1:  # 如果是最后一次重试
+                    if i == max_retries - 1:  # If it's the last retry
                         print("All retries failed")
                         return ""
     except Exception as e:
