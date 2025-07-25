@@ -1,0 +1,7 @@
+numpy
+requests
+sentence-transformers
+scikit-learn
+tiktoken
+networkx
+spacy 
