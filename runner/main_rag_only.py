@@ -28,6 +28,7 @@ Compatible datasets:
 
 import os
 import json
+import argparse
 import requests
 import numpy as np
 from typing import List, Dict, Union, Optional
@@ -297,7 +298,28 @@ def single_query_execution(decompose, all_metrics, queries_and_truth, local_rag,
     
     return all_metrics
 
-def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool = True, max_reflexion_times: int = 2, dataset: str = "hotpot_qa", sample_size: int = 100, openai_model: str = "deepseek-chat", openai_api_key: str = None, openai_base_url: str = None, rag_type: str = "naive"):
+
+
+# --- Argument Parser ---
+def parse_args():
+    parser = argparse.ArgumentParser(description="DeepSieve RAG-only pipeline")
+    parser.add_argument("--decompose", action="store_true", help="Enable query decomposition")
+    parser.add_argument("--use_routing", action="store_true", help="Enable routing to local/global RAG")
+    parser.add_argument("--use_reflection", action="store_true", help="Enable reflection on failed queries")
+    parser.add_argument("--max_reflexion_times", type=int, default=2, help="Max retry times for reflection")
+    
+    parser.add_argument("--dataset", type=str, default="hotpot_qa", help="Dataset name")
+    parser.add_argument("--sample_size", type=int, default=100, help="Number of samples to evaluate")
+
+    parser.add_argument("--openai_model", type=str, default=os.environ.get("OPENAI_MODEL", "deepseek-chat"))
+    parser.add_argument("--openai_api_key", type=str, default=os.environ.get("OPENAI_API_KEY"))
+    parser.add_argument("--openai_base_url", type=str, default=os.environ.get("OPENAI_API_BASE"))
+
+    parser.add_argument("--rag_type", type=str, choices=["naive", "graph"], default=os.environ.get("RAG_TYPE", "naive"))
+    return parser.parse_args()
+
+
+def main(args):
     """
     Main function
     Args:
@@ -313,29 +335,27 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
         rag_type: RAG type, can be "naive" or "graph"
     """
     # Load data
-    queries_and_truth = load_queries(dataset, sample_size)
-    save_dir = get_save_dir(decompose, use_routing, use_reflection, dataset, rag_type)
+    queries_and_truth = load_queries(args.dataset, args.sample_size)
+    save_dir = get_save_dir(args.decompose, args.use_routing, args.use_reflection, args.dataset, args.rag_type)
     os.makedirs(save_dir, exist_ok=True)
 
-    openai_model = openai_model
-    openai_api_key = openai_api_key
-    openai_base_url = openai_base_url
+    openai_model = args.openai_model
+    openai_api_key = args.openai_api_key
+    openai_base_url = args.openai_base_url
     if not openai_api_key:
         raise ValueError("❌ Please set your OPENAI_API_KEY environment variable.")
 
     # Prepare knowledge base documents
-    local_docs, global_docs, local_profile, global_profile = load_corpus_and_profiles(dataset)
+    local_docs, global_docs, local_profile, global_profile = load_corpus_and_profiles(args.dataset)
     print(f"✅ Loaded {len(local_docs)} documents into local_docs.")
     print(f"✅ Loaded {len(global_docs)} documents into global_docs.")
     print(f"✅ Loaded local_profile and global_profile.")
 
     # Initialize RAG system
-    local_rag, global_rag, merged_rag = initialize_rag_system(rag_type, use_routing, local_docs, global_docs)
+    local_rag, global_rag, merged_rag = initialize_rag_system(args.rag_type, args.use_routing, local_docs, global_docs)
 
-    all_metrics = []  # Store all query performance metrics
-    
-
-    all_metrics = single_query_execution(decompose, all_metrics, queries_and_truth, local_rag, global_rag, merged_rag, use_routing, use_reflection, max_reflexion_times, local_profile, global_profile, openai_api_key, openai_model, openai_base_url, save_dir)
+    all_metrics = []  # Store all query performance metrics    
+    all_metrics = single_query_execution(args.decompose, all_metrics, queries_and_truth, local_rag, global_rag, merged_rag, args.use_routing, args.use_reflection, args.max_reflexion_times, local_profile, global_profile, openai_api_key, openai_model, openai_base_url, save_dir)
     # Compute and save overall performance metrics
     overall_metrics = calculate_overall_metrics(all_metrics)
     
@@ -343,14 +363,5 @@ def main(decompose: bool = True, use_routing: bool = True, use_reflection: bool 
     save_overall_results(save_dir, overall_metrics, queries_and_truth, all_metrics)
 
 if __name__ == "__main__":
-    # Default to decompose and routing mode
-    main(decompose=True, 
-         use_routing=True, 
-         use_reflection=True, 
-         max_reflexion_times=2, 
-         dataset="hotpot_qa", 
-         sample_size=1, 
-         openai_model=os.environ.get("OPENAI_MODEL"),  
-         openai_api_key=os.environ.get("OPENAI_API_KEY"), 
-         openai_base_url=os.environ.get("OPENAI_API_BASE"),
-         rag_type=os.environ.get("RAG_TYPE", "naive"))  # naive or graph
+    args = parse_args()
+    main(args)
