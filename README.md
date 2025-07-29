@@ -1,4 +1,22 @@
-# 🧠 DeepSieve RAG Pipeline Quickstart
+# DeepSieve: Information Sieving via LLM-as-a-Knowledge-Router
+
+> A modular, multi-source, multi-hop RAG framework that decomposes queries, routes subquestions, and fuses answers with reflexive reasoning.
+
+
+## 🌐 Overview
+
+**DeepSieve** is a Retrieval-Augmented Generation (RAG) framework designed to handle:
+- **Structurally heterogeneous knowledge** (e.g., SQL tables, JSON logs, Wikipedia)
+- **Compositional queries** requiring multi-step reasoning
+- **Privacy-aware sources** that cannot be merged
+
+DeepSieve introduces a novel _information sieving_ pipeline:
+1. **Decompose** complex queries into subquestions
+2. **Route** each subquestion to an appropriate tool–corpus pair
+3. **Reflect** and retry failed retrievals
+4. **Fuse** partial answers into a final response
+
+## 🧠 RAG Pipeline Quickstart
 
 This pipeline implements a modular Retrieval-Augmented Generation (RAG) system with:
 
