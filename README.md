@@ -2,7 +2,7 @@
 
 > A modular, multi-source, multi-hop RAG framework that decomposes queries, routes subquestions, and fuses answers with reflexive reasoning.
 
-
+The arxiv link is https://arxiv.org/abs/2507.22050
 ## 🌐 Overview
 
 **DeepSieve** is a Retrieval-Augmented Generation (RAG) framework designed to handle:
