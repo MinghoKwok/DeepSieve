@@ -131,3 +131,12 @@ Each run saves:
   `overall_results.txt` and `overall_results.json`
 
 ---
+## Cite
+```
+@article{guo2025deepsieve,
+  title={DeepSieve: Information Sieving via LLM-as-a-Knowledge-Router},
+  author={Guo, Minghao and Zeng, Qingcheng and Zhao, Xujiang and Liu, Yanchi and Yu, Wenchao and Du, Mengnan and Chen, Haifeng and Cheng, Wei},
+  journal={arXiv preprint arXiv:2507.22050},
+  year={2025}
+}
+```
