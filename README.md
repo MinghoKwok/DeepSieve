@@ -5,6 +5,10 @@
 The arxiv link is https://arxiv.org/abs/2507.22050
 
 The website link is https://minghokwok.github.io/deepsieve
+
+## 📰 News
+2025-07-29 — Uploaded full corpus to Arkiv and released DeepSieve preprint on arXiv
+
 ## 🌐 Overview
 
 **DeepSieve** is a Retrieval-Augmented Generation (RAG) framework designed to handle:
@@ -131,7 +135,8 @@ Each run saves:
   `overall_results.txt` and `overall_results.json`
 
 ---
-## Cite
+## 📚 Citation
+If you find this work helpful, please consider citing our paper:
 ```
 @article{guo2025deepsieve,
   title={DeepSieve: Information Sieving via LLM-as-a-Knowledge-Router},
