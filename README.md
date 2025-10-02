@@ -2,13 +2,6 @@
 
 > A modular, multi-source, multi-hop RAG framework that decomposes queries, routes subquestions, and fuses answers with reflexive reasoning.
 
-The arxiv link is https://arxiv.org/abs/2507.22050
-
-The website link is https://minghokwok.github.io/deepsieve
-
-## 📰 News
-2025-07-29 — Uploaded full corpus to Arkiv and released DeepSieve preprint on arXiv
-
 ## 🌐 Overview
 
 ![Overview](Fig/Overview.png)
@@ -138,14 +131,5 @@ Each run saves:
 - Aggregated metrics:  
   `overall_results.txt` and `overall_results.json`
 
----
-## 📚 Citation
-If you find this work helpful, please consider citing our paper:
-```
-@article{guo2025deepsieve,
-  title={DeepSieve: Information Sieving via LLM-as-a-Knowledge-Router},
-  author={Guo, Minghao and Zeng, Qingcheng and Zhao, Xujiang and Liu, Yanchi and Yu, Wenchao and Du, Mengnan and Chen, Haifeng and Cheng, Wei},
-  journal={arXiv preprint arXiv:2507.22050},
-  year={2025}
-}
+
 ```
